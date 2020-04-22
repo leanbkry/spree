@@ -16,6 +16,8 @@ module Spree
       @variants.map do |variant|
         {
           display_price: display_price(variant),
+          display_compare_at_price: display_compare_at_price(variant),
+          should_display_compare_at_price: should_display_compare_at_price(variant),
           is_product_available_in_currency: @is_product_available_in_currency,
           backorderable: backorderable?(variant),
           in_stock: in_stock?(variant),
@@ -70,6 +72,14 @@ module Spree
         sku: variant.sku,
         purchasable: variant.purchasable?
       }
+    end
+
+    def should_display_compare_at_price(variant)
+      if variant.compare_at_price.nil?
+        false
+      else
+        variant.compare_at_price > variant.price
+      end
     end
   end
 end

@@ -7,7 +7,7 @@
     <div class="card-body">
       <fieldset data-hook="admin_variant_new_form">
         <legend class="border-bottom"><%= Spree.t(:new_variant) %></legend>
-        <%= render partial: 'form', locals: { f: f } %>
+        <%= render partial: 'form', locals: { f: f, type: 'new' } %>
         <%= render partial: 'spree/admin/shared/new_resource_links' %>
       </fieldset>
     </div>
