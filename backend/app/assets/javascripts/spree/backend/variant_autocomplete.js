@@ -21,7 +21,7 @@ function formatVariantResult (variant) {
 $.fn.variantAutocomplete = function () {
   return this.select2({
     placeholder: Spree.translations.variant_placeholder,
-    minimumInputLength: 3,
+    minimumInputLength: 1,
     initSelection: function (element, callback) {
       return $.get(Spree.routes.variants_api + '/' + element.val(), {
         token: Spree.api_key
@@ -36,7 +36,7 @@ $.fn.variantAutocomplete = function () {
       data: function (term) {
         return {
           q: {
-            product_name_or_sku_cont: term
+            product_sku_cont: term
           },
           token: Spree.api_key
         }
