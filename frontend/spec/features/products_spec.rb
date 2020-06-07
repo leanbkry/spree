@@ -119,7 +119,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
   it 'is able to search for a product' do
     fill_in 'keywords', with: 'shirt'
-    first('input[type=submit]').click
+    first('button[type=submit]').click
 
     expect(page).to have_css('.product-component-name').once
   end
@@ -424,6 +424,90 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
       expect(page).to have_content('$89.99')
       expect(page).not_to have_content('$79.99')
+    end
+  end
+
+  describe 'When Requesting A Product By Variant Using URL Query String' do
+    let(:product) do
+      FactoryBot.create(:base_product, description: 'Testing sample', name: 'Sample', price: '19.99')
+    end
+
+    let(:option_type) { create(:option_type) }
+    let(:option_value1) { create(:option_value, name: 'small', presentation: 'S', option_type: option_type) }
+    let(:option_value2) { create(:option_value, name: 'medium', presentation: 'M', option_type: option_type) }
+    let(:option_value3) { create(:option_value, name: 'large', presentation: 'L', option_type: option_type) }
+    let(:variant1) { create(:variant, product: product, option_values: [option_value1], price: '49.99', sku: 'VAR-1') }
+    let(:variant2) { create(:variant, product: product, option_values: [option_value2], price: '69.99', sku: 'VAR-2') }
+    let(:variant3) { create(:variant, product: product, option_values: [option_value3], price: '89.99', sku: 'VAR-3') }
+
+    before do
+      product.option_types << option_type
+      product.variants << [variant1, variant2, variant3]
+      product.tap(&:save)
+      product.stock_items.last.update count_on_hand: 0, backorderable: false
+    end
+
+    context 'Make sure the requested variant', js: true do
+      it 'shows the correct price in the HTML' do
+        visit spree.product_path(product) + '?variant=' + variant3.id.to_s
+        expect(page).to have_content(variant3.price.to_s)
+      end
+
+      it 'shows back-ordered in the HTML when product is on backorder' do
+        visit spree.product_path(product) + '?variant=' + variant2.id.to_s
+        expect(page).to have_content('BACKORDERED')
+      end
+
+      it 'shows out of stock in the HTML when the product is unavailable' do
+        visit spree.product_path(product) + '?variant=' + variant3.id.to_s
+        expect(page).to have_content('OUT OF STOCK')
+      end
+
+      it 'does not update the variant HTML details if no variant is matched' do
+        visit spree.product_path(product) + '?variant=9283923297832973283'
+        expect(page).to have_content(variant1.price.to_s)
+        expect(page).to have_content('BACKORDERED')
+      end
+
+      it 'sets JSON in the Schema.org SKU, URL, price and availability' do
+        visit spree.product_path(product) + '?variant=' + variant3.id.to_s
+
+        jsonld = page.find('script[type="application/ld+json"]', visible: false).text(:all)
+        jsonstring = Capybara.string(jsonld)
+
+        expect(jsonstring).to have_text('?variant=' + variant3.id.to_s)
+        expect(jsonstring).to have_text('"availability":"OutOfStock"')
+        expect(jsonstring).to have_text('"sku":"VAR-3"')
+        expect(jsonstring).to have_text('"price":"89.99"')
+      end
+    end
+  end
+      
+  context 'a product with properties set will' do
+    let(:property) { create(:property) }
+    let(:prop1) { create(:property, name: 'Amazon Data Catalog', presentation: 'amazon_dataset_catagory') }
+    let(:prop2) { create(:property, name: 'Product Brand', presentation: 'Presentation Brand') }
+
+    let(:product) do
+      FactoryBot.create(:base_product, properties: [prop1, prop2], description: 'Testing Product Properties', name: 'Sample Product')
+    end
+
+    before do
+      product.tap(&:save)
+      product.product_properties.first.update(value: '9377-AMZ-1837', show_property: false)
+      product.product_properties.last.update(value: 'Funky Seagull')
+
+      visit spree.product_path(product)
+    end
+
+    it "show the property by default" do
+      expect(page).to have_content('Presentation Brand')
+      expect(page).to have_content('Funky Seagull')
+    end
+
+    it "not show the propery if show_property is unchecked" do
+      expect(page).not_to have_content('amazon_dataset_catagory')
+      expect(page).not_to have_content('9377-AMZ-1837')
     end
   end
 end

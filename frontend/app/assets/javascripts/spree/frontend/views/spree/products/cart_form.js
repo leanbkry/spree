@@ -1,5 +1,6 @@
 //= require spree/api/storefront/cart
 //= require ../shared/product_added_modal
+//= require ../shared/variant_select
 
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
@@ -20,6 +21,7 @@ function CartForm($, $cartForm) {
   }
 
   this.initialize = function() {
+    this.urlQueryMatchFound = false
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
@@ -29,13 +31,25 @@ function CartForm($, $cartForm) {
     this.$compareAtPrice = $cartForm.find('.compare-at-price')
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
-    this.initializeForm()
+    this.initializeQueryParamsCheck()
+
+    if (this.urlQueryMatchFound) {
+      this.setSelectedVariantFromUrl()
+    } else {
+      this.initializeForm()
+    }
   }
 
   this.initializeForm = function() {
     if (this.withOptionValues) {
       var $optionValue = this.firstCheckedOptionValue()
       this.applyCheckedOptionValue($optionValue, true)
+      var singleOptionValues = this.getSingleOptionValuesFromEachOptionType()
+      if (singleOptionValues.length) {
+        singleOptionValues.forEach(function($value) {
+          this.applyCheckedOptionValue($value, true)
+        })
+      }
     } else {
       this.updateAddToCart()
       this.triggerVariantImages()
@@ -62,6 +76,8 @@ function CartForm($, $cartForm) {
     if (this.shouldTriggerVariantImage($optionValue)) {
       this.triggerVariantImages()
     }
+
+    if (initialUpdate) $optionValue.prop('checked', true)
   }
 
   this.saveCheckedOptionValue = function($optionValue) {
@@ -119,6 +135,17 @@ function CartForm($, $cartForm) {
 
   this.firstCheckedOptionValue = function() {
     return $cartForm.find(OPTION_VALUE_SELECTOR + '[data-option-type-index=0]' + ':checked')
+  }
+
+  this.getSingleOptionValuesFromEachOptionType = function() {
+    var singleOptionValues = []
+    this.optionTypes().each(function(_, optionType) {
+      var $optionValues = $(optionType).find(OPTION_VALUE_SELECTOR)
+      if ($optionValues.length === 1) {
+        singleOptionValues.push($optionValues.first())
+      }
+    })
+    return singleOptionValues
   }
 
   this.shouldTriggerVariantImage = function($optionValue) {
