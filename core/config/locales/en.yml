@@ -745,6 +745,7 @@ en:
     customer_returns: Customer Returns
     customer_search: Customer Search
     customer_support_email: Customer Support Email
+    new_order_notifications_email: New Order Notifications Email
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
@@ -853,6 +854,7 @@ en:
     finalized: Finalized
     first_item: First Item
     first_name: First Name
+    firstname: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
@@ -962,6 +964,7 @@ en:
     items_reimbursed: Items reimbursed
     join_slack: Join Slack
     last_name: Last Name
+    lastname: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
     lifetime_stats: Lifetime Stats
@@ -1072,6 +1075,7 @@ en:
     no_actions_added: No actions added
     no_address_given: No address given
     no_available_date_set: No available date set
+    no_country: No country set
     no_payment_found: No payment found
     no_pending_payments: No pending payments
     no_product_available:
@@ -1140,6 +1144,11 @@ en:
         order_summary: Order %{number} Summary
         subject: Order Confirmation
         thanks: Thank you for your business.
+      store_owner_notification_email:
+        heading: New Order Received
+        instructions: You have received a new order.
+        order_summary: Order %{number} Summary
+        subject: '%{store_name} received a new order'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
