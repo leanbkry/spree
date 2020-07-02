@@ -71,7 +71,7 @@ module Spree
         ) << content_tag(:meta, nil, itemprop: 'position', content: '1'), class: 'active', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement')
       end
       crumb_list = content_tag(:ol, raw(crumbs.flatten.map(&:mb_chars).join), class: 'breadcrumb', itemscope: 'itemscope', itemtype: 'https://schema.org/BreadcrumbList')
-      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-12 mt-1 mt-sm-3 mt-lg-4', aria: { label: 'breadcrumb' })
+      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-12 mt-1 mt-sm-3 mt-lg-4', aria: { label: Spree.t(:breadcrumbs) })
     end
 
     def class_for(flash_type)
@@ -253,6 +253,10 @@ module Spree
 
     def static_filters
       @static_filters ||= Spree::Frontend::Config[:products_filters]
+    end
+
+    def additional_filters_partials
+      @additional_filters_partials ||= Spree::Frontend::Config[:additional_filters_partials]
     end
 
     def filtering_params

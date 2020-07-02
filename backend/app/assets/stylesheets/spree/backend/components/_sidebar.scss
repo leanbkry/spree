@@ -1,85 +1,153 @@
-.sidebar {
+
+aside#main-sidebar {
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   background-color: $gray-100;
   border-right: 1px solid $gray-200;
-  margin-top: 50px;
-  height: calc(100% - 50px);
-  z-index: 999;
+  width: 100%;
+  left: -100%;
+  margin-top: 0;
+  height: 100%;
+  transition: 0.3s ease;
+  z-index: 1041;
+}
 
-  a.sidebar-submenu-item:hover {
+body.sidebar-open {
+  overflow-x: hidden;
+  aside#main-sidebar {
+    left:0;
+    transition: 0.3s ease;
+  }
+  .disable-when-main-menu-is-open {
+    z-index: 1040 !important;
+  }
+}
+
+a.sidebar-submenu-item:hover {
     text-decoration: none;
     background-color: $gray-200;
     cursor: pointer
+}
+
+ul.active-option {
+  background-color: $gray-200;
+  .drop-menu-indicator {
+    transform: rotate(-90deg);
   }
+}
 
-  ul.nav-sidebar {
-    > li {
-      > a {
-        color: $gray-700;
+ul.nav-sidebar {
+  > li {
+    > a {
+      color: $gray-700;
 
-        &:hover,
-        &[aria-expanded="true"] {
-          text-decoration: none;
-          background-color: $gray-200;
+      &:hover,
+      &[aria-expanded="true"] {
+        text-decoration: none;
+      }
+
+      .drop-menu-indicator {
+        right: 1rem;
+      }
+
+      &[aria-expanded="true"] {
+        .drop-menu-indicator {
+          transform: rotate(-90deg);
+          transition: .3s ease-in-out;
         }
+      }
 
-        .icon-chevron-left,
-        .icon-chevron-down {
-          font-size: .5rem;
-          line-height: 2;
-          right: 1rem;
-          top: 50%;
-          margin-top: -.5rem;
+      &[aria-expanded="false"] {
+        .drop-menu-indicator {
+          transform: rotate(0deg);
+          transition: .3s ease-in-out;
         }
+      }
+      > svg {
+        margin-bottom: 0;
       }
     }
   }
 }
 
-#wrapper.sidebar-minimized #main-sidebar {
-  width: 50px;
-  overflow: visible;
+#contextualSideMenu {
+  max-height: 85vh;
+  overflow-x: scroll;
+  background-color: white;
+  position: fixed;
+  left:0;
+  top: -100%;
+  z-index: 1041;
+  transition: .3s ease-in-out;
+}
 
-  li {
-    &:hover, &.menu-active {
-      background-color: $gray-100;
-    }
+#contextual-menu-toggle {
+  position: fixed;
+  bottom: 15px;
+  right:15px;
+  border: none;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0px 3px 14px 2px rgba(0,0,0,.12);
+
+  & svg {
+    transform:rotate(0deg);
+    transition: .3s ease-in-out;
   }
+}
 
-  .icon-link, [data-toggle="collapse"] {
-    text-align: center;
+body.contextualSideMenu-open #contextualSideMenu {
+    top: 0;
+    transition: .3s ease-in-out;
+}
 
-    .icon {
-      padding: 0;
-    }
-
-    .text, .icon-chevron-left, .icon-chevron-down {
-      display: none;
-    }
+body.contextualSideMenu-open #contextual-menu-toggle {
+  z-index: 1041;
+  svg {
+      transform:rotate(180deg);
+      transition: .3s ease-in-out;
   }
+}
 
-  ul.collapse.in {
-    display: none;
+.contextual-title {
+  font-size:1.25rem;
+}
+
+
+@include media-breakpoint-up(sm) {
+  aside#main-sidebar {
+    width: 50%;
   }
+}
 
-  .submenu-active {
-    display: block !important;
-    height: auto !important;
-    position: fixed;
-    top: 50px;
-    bottom: 0;
-    left: 0;
-    padding: 0;
+@include media-breakpoint-up(md) {
+  aside#main-sidebar {
+    width: 30%;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+
+  #contextualSideMenu{
+    position: relative;
+    border: none;
+    height: auto;
     z-index: 1000;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    left: 50px;
-    min-width: 180px;
-    visibility: visible;
-    background-color: $gray-100;
-    border-top: none;
-    border-right: 1px solid $gray-200;
-    padding-top: 5px;
+  }
+    aside#main-sidebar {
+      left: 0;
+      z-index: 999;
+      margin-top: 50px;
+      height: calc(100% - 50px);
+      transition: 0;
+      body.sidebar-open {
+        aside#main-sidebar {
+          left:0;
+          transition: 0;
+        }
+      }
+  }
+
+  .contextual-title {
+    font-size:1.5rem;
   }
 }
