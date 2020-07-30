@@ -5,11 +5,11 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_backend'
   s.version     = Spree.version
-  s.author      = 'Sean Schofield'
-  s.email       = 'sean@spreecommerce.com'
+  s.authors     = ['Sean Schofield', 'Spark Solutions']
+  s.email       = 'hello@spreecommerce.org'
   s.summary     = 'backend e-commerce functionality for the Spree project.'
   s.description = 'Required dependency for Spree'
-  s.homepage    = 'http://spreecommerce.org'
+  s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
   s.metadata = {
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'bootstrap',       '>= 4.3.1', '< 4.6.0'
   s.add_dependency 'glyphicons',      '~> 1.0.2'
+  s.add_dependency 'flatpickr',       '~> 4.6.0'
   s.add_dependency 'inline_svg',      '~> 1.5'
   s.add_dependency 'jquery-rails',    '~> 4.3'
   s.add_dependency 'jquery-ui-rails', '~> 6.0.1'

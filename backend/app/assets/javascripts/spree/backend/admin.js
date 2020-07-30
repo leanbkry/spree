@@ -4,11 +4,23 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number, Sortable */
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
+
+//= require spree/backend/flatpickr_locals
 
 jQuery(function ($) {
   // Add some tips
-  $('.with-tip').tooltip()
+  $('.with-tip').each(function() {
+    $(this).tooltip({
+      container: $(this)
+    })
+  })
+
+  $('.with-tip').on('show.bs.tooltip', function(event) {
+    if (('ontouchstart' in window)) {
+      event.preventDefault()
+    }
+  })
 
   $('.js-show-index-filters').click(function () {
     $('.filter-well').slideToggle()
@@ -20,7 +32,15 @@ jQuery(function ($) {
   var modalBackdrop  = $('#multi-backdrop')
 
   // Fail safe on resize
-  document.getElementsByTagName("BODY")[0].onresize = function() { closeAllMenus() }
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    document.body.classList.remove('modal-open', 'sidebar-open', 'contextualSideMenu-open');
+    document.body.classList.add('resize-animation-stopper');
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      document.body.classList.remove('resize-animation-stopper');
+    }, 400);
+  });
 
   function closeAllMenus() {
     body.removeClass()
@@ -48,6 +68,7 @@ jQuery(function ($) {
 
   // Contextual Sidebar Menu
   var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
+  var contextualSidebarMenuClose = $('#contextual-menu-close')
 
   function toggleContextualMenu() {
     if (document.body.classList.contains('contextualSideMenu-open')) {
@@ -59,6 +80,7 @@ jQuery(function ($) {
     }
   }
   contextualSidebarMenuToggle.click(toggleContextualMenu)
+  contextualSidebarMenuClose.click(toggleContextualMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
@@ -113,8 +135,9 @@ jQuery(function ($) {
       }
 
       label = ransackField(label.text()) + ': ' + ransackValue
+      var cleanLabel = DOMPurify.sanitize(label)
 
-      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + label + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
+      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + cleanLabel + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
       $(".js-filters").append(filter).show()
     }
   })
@@ -144,20 +167,46 @@ jQuery(function ($) {
       $('#table-filter form').append(perPageInput)
     }
   })
+})
 
-  // Make flash messages disappear
-  setTimeout(function () { $('.alert-auto-disappear').slideUp() }, 5000)
+function handleAlert (element) {
+  element.classList.add('animate__animated', 'animate__bounceInUp')
+  element.addEventListener('animationend', function () {
+    element.classList.remove('animate__bounceInUp')
+    element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s')
+  })
+}
+
+// Triggers alert if required on document ready.
+$(document).ready(function () {
+  var element = document.querySelector('.flash-alert')
+
+  if (element) {
+    handleAlert(element)
+  }
 })
 
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
+// Triggers alerts when requested by javascript.
 // eslint-disable-next-line camelcase
 function show_flash (type, message) {
+  var cleanMessage = DOMPurify.sanitize(message)
+  var existingAlert = document.querySelector('.flash-alert')
+
+  if (existingAlert) {
+    existingAlert.remove()
+  }
+
   var flashDiv = $('.alert-' + type)
   if (flashDiv.length === 0) {
-    flashDiv = $('<div class="alert alert-' + type + '" />')
-    $('#content').prepend(flashDiv)
+    flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
+                 '<div class="alert alert-' + type + ' mx-2">' + cleanMessage + '</div></div>')
+
+    $('body').append(flashDiv)
+
+    var ajaxFlashNotfication = document.querySelector('.flash-alert')
+    handleAlert(ajaxFlashNotfication)
   }
-  flashDiv.html(message).show().delay(10000).slideUp()
 }
 
 // Apply to individual radio button that makes another element visible when checked
@@ -173,31 +222,34 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
     if (this.checked) { this.click() }
   })
 }
-// eslint-disable-next-line camelcase
-function handle_date_picker_fields () {
-  $('.datepicker').datepicker({
+
+document.addEventListener('DOMContentLoaded', function() {
+  var dateFrom = flatpickr('.datePickerFrom', {
+    time_24hr: true,
     dateFormat: Spree.translations.date_picker,
-    dayNames: Spree.translations.abbr_day_names,
-    dayNamesMin: Spree.translations.abbr_day_names,
-    firstDay: Spree.translations.first_day,
-    monthNames: Spree.translations.month_names,
-    prevText: Spree.translations.previous,
-    nextText: Spree.translations.next,
-    showOn: 'focus',
-    showAnim: ''
+    monthSelectorType: 'static',
+    onChange: function(selectedDates) {
+      dateTo.set('minDate', selectedDates[0])
+    }
   })
 
-  // Correctly display range dates
-  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function (selectedDate) {
-    $('.date-range-filter .datepicker-to').datepicker('option', 'minDate', selectedDate)
+  var dateTo = flatpickr('.datePickerTo', {
+    monthSelectorType: 'static',
+    time_24hr: true,
+    dateFormat: Spree.translations.date_picker,
+    onChange: function(selectedDates) {
+      dateFrom.set('maxDate', selectedDates[0])
+    }
   })
-  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function (selectedDate) {
-    $('.date-range-filter .datepicker-from').datepicker('option', 'maxDate', selectedDate)
+
+  flatpickr('.datepicker', {
+    monthSelectorType: 'static',
+    time_24hr: true,
+    dateFormat: Spree.translations.date_picker
   })
-}
+})
 
 $(document).ready(function() {
-  handle_date_picker_fields()
   $('.observe_field').on('change', function() {
     target = $(this).data('update')
     $(target).hide()
@@ -242,7 +294,10 @@ $(document).ready(function() {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
         },
-        dataType: 'script'
+        dataType: 'script',
+        complete: function() {
+          el.blur()
+        }
       }).done(function () {
         var $flash_element = $('.alert-success')
         if ($flash_element.length) {
@@ -253,6 +308,8 @@ $(document).ready(function() {
       }).fail(function (response) {
         show_flash('error', response.responseText)
       })
+    } else {
+      el.blur()
     }
     return false
   })

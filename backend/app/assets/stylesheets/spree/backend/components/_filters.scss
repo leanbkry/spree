@@ -1,7 +1,5 @@
 #table-filter {
   display: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
   margin-top: 20px;
 }
 
@@ -18,6 +16,12 @@
 
 .default-filter-icon {
   opacity: 0.1;
+}
+
+i.js-delete-filter {
+  width: $select2-icon-size;
+  height: $select2-icon-size;
+  margin-bottom: 0;
 }
 
 .index-filter-button {
@@ -55,7 +59,8 @@
     height: 0.8rem;
 
   }
-  svg.default-filter-arrow{
+  
+  svg.default-filter-arrow {
     opacity: 0.1;
   }
 }

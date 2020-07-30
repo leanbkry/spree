@@ -634,7 +634,7 @@ en:
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
     capture: Capture
     capture_events: Capture events
-    card_code: Card Code
+    card_code: Card Varification Code (CVC)
     card_number: Card Number
     card_type: Brand
     card_type_is: Card type is
@@ -664,6 +664,8 @@ en:
     charged: Charged
     checkout: Checkout
     checkout_page:
+      main_navigation: Main navigation
+      checkout_navigation: Checkout navigation
       back_to_cart: back to the cart
       delivery_method: delivery method
       header: Checkout
@@ -740,7 +742,7 @@ en:
     currencies: Currencies
     currency_settings: Currency Settings
     current: Current
-    current_promotion_usage: ! 'Current Usage: %{count}'
+    current_promotion_usage: ! 'current usage: %{count}'
     customer: Customer
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
@@ -755,9 +757,38 @@ en:
     date: Date
     date_completed: Date Completed
     date_picker:
+      am: 'AM'
       first_day: 0
       format: ! '%Y/%m/%d'
-      js_format: yy/mm/dd
+      hourAriaLabel: 'Hour'
+      js_format: Y/m/d
+      js_date_time: Y/m/d - H:i
+      minuteAriaLabel: 'Minute'
+      pm: 'PM'
+      rangeSeparator: ' to '
+      scrollTitle: 'Scroll to increment'
+      toggleTitle: 'Click to toggle'
+      weekAbbreviation: 'Wk'
+      yearAriaLabel: 'Year'
+      sun: 'Sun'
+      mon: 'Mon'
+      tue: 'Tue'
+      wed: 'Wed'
+      thu: 'Thu'
+      fri: 'Fri'
+      sat: 'Sat'
+      lh_jan: 'January'
+      lh_feb: 'February'
+      lh_mar: 'March'
+      lh_apr: 'April'
+      lh_may: 'May'
+      lh_jun: 'June'
+      lh_jul: 'July'
+      lh_aug: 'August'
+      lh_sep: 'September'
+      lh_oct: 'October'
+      lh_nov: 'November'
+      lh_dec: 'December'
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
@@ -807,6 +838,8 @@ en:
     empty_cart: Empty Cart
     enable_mail_delivery: Enable Mail Delivery
     end: End
+    ends_at: Ends at
+    ending_at: Ending at
     ending_in: Ending in
     error: error
     errors:
@@ -910,6 +943,7 @@ en:
       available_locales: Available Locales
       fields: Fields
       language: Language
+      country: Country
       localization_settings: Localization Settings
       only_incomplete: Only incomplete
       only_complete: Only complete
@@ -973,6 +1007,7 @@ en:
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
     lifetime_stats: Lifetime Stats
+    limit_usage_to: Limit usage to
     line_item_adjustments: "Line item adjustments"
     list: List
     loading: Loading
@@ -991,6 +1026,7 @@ en:
     login_as_existing: Login as Existing Customer
     login_failed: Login authentication failed.
     login_name: Login
+    logo: Logo
     logo_alt: Brand logo
     logout: Logout
     look_for_similar_items: Look for similar items
@@ -1269,6 +1305,7 @@ en:
     preview_taxon: Preview Taxon
     previous: Previous
     previous_state_missing: "n/a"
+    previously_used_card: Previously Used Cards
     price: Price
     prices: Prices
     price_range: Price Range
@@ -1455,6 +1492,8 @@ en:
     security_settings: Security Settings
     select: Select
     select_from_prototype: Select From Prototype
+    select_a_date: Select a date
+    select_a_date_range: Select a date range
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
@@ -1537,6 +1576,7 @@ en:
     ssl:
       change_protocol: "Please switch to using HTTP (rather than HTTPS) and retry this request."
     start: Start
+    starting_from: Starts at
     state: State
     state_based: State Based
     states: States

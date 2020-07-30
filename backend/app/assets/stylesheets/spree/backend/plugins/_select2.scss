@@ -1,3 +1,6 @@
+div.select2-drop-mask {
+  z-index: 999;
+}
 .select2-container {
   display: block;
 
@@ -7,6 +10,7 @@
     border-color: $input-border-color;
     background-image: none;
     background-color: $input-bg;
+    color: $gray-700;
 
     &,
     .select2-arrow {
@@ -16,11 +20,8 @@
     .select2-arrow {
       background-image: none;
       background-color: $input-bg;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-left-color: $input-border-color;
-      width: 24px;
-
+      border:none;
+      width: 30px;
 
       b {
         background-image: url(asset-path("backend-chevron-down.svg")) !important;
@@ -28,12 +29,11 @@
         vertical-align: middle !important;
         background-repeat: no-repeat !important;
         background-size: 1rem !important;
-        background-position: 54% !important;
+        background-position: 48% !important;
       }
     }
 
     .select2-chosen {
-      line-height: 36px;
       vertical-align: middle;
       display: inline;
     }
@@ -44,6 +44,10 @@
   }
 }
 
+.select2-container-multi .select2-choices .select2-search-field input {
+  color: $gray-700;
+}
+
 .select2-search input {
   border-color: $input-border-color;
   border-radius: $border-radius;
@@ -52,10 +56,11 @@
   vertical-align: middle !important;
   background-repeat: no-repeat !important;
   background-size: 1rem !important;
-  background-position: 95% !important;
+  background-position: 97% !important;
 }
 
 .select2-drop {
+  z-index: $zindex-dropdown;
   &, &.select2-drop-above {
     border-radius: $border-radius;
     box-shadow: none;
@@ -63,6 +68,11 @@
 }
 
 .select2-container-active {
+  .select2-choice,
+  .select2-choices {
+    border-color: $input-focus-border-color;
+    border-bottom: 1px solid $input-focus-border-color;
+  }
   &, & a {
     box-shadow: none !important;
   }
@@ -73,31 +83,32 @@
   background-image: none;
 }
 
-.select2-dropdown-open.select2-drop-above .select2-choice {
-  border-radius: 0 0 $border-radius $border-radius;
-}
 
-.select2-drop-above,
-.select2-dropdown-open.select2-drop-above .select2-choice,
-.select2-dropdown-open .select2-choice {
-  border-color: lighten($success, 20);
-  border-bottom: none !important;
-  border-radius: $border-radius $border-radius 0 0 ;
-}
-
-.select2-drop.select2-drop-above.select2-drop-active,
 .select2-drop.select2-drop-active {
-  border-color: lighten($success, 20);
-  border-top: none;
+  border-color: $input-focus-border-color;
+  border-top: 0;
+  border-radius: 0 0  $border-radius $border-radius;
+  margin-top: -6px;
 }
 
+.select2-drop.select2-drop-above.select2-drop-active {
+  border-color: $input-focus-border-color;
+  border-top: 1px solid $input-focus-border-color;
+  border-radius: $border-radius $border-radius 0 0;
+  margin-top: 6px;
+}
 
+.select2-container.select2-drop-above .select2-choice {
+  border-color: $input-focus-border-color !important;
+  border-radius: $border-radius;
+}
 .select2-result-label {
   color: $gray-900;
 }
 
 .select2-results .select2-highlighted {
   background-color: $primary;
+  border-radius: $border-radius;
 
   .select2-result-label {
     color: white;
@@ -106,7 +117,9 @@
 
 .select2-container-multi {
   .select2-choices {
-    line-height: 1.8;
+    min-height: $input-height;
+    border-radius: $border-radius;
+    line-height: 1;
     border-color: $input-border-color;
     background-image: none;
     background-color: $input-bg;
@@ -133,7 +146,7 @@
       }
 
       div {
-        padding-left: 15px;
+        padding-left: 17px;
       }
     }
   }
@@ -141,7 +154,7 @@
   &.select2-container-active {
     .select2-choices {
       box-shadow: none;
-
+      border-color: $input-focus-border-color;
     }
   }
 }
@@ -150,7 +163,7 @@
 .select2-search-choice-close,
 .select2-container .select2-choice abbr,
 .select2-container .select2-choice .select2-arrow b {
-    background-size: 0.7rem !important;
+    background-size: $select2-icon-size !important;
 }
 
 .select2-container.select2-allowclear .select2-choice abbr{
@@ -160,7 +173,7 @@
   background-repeat: no-repeat !important;
   background-position: 50% !important;
   right:30px;
-  background-size: 0.7rem !important;
+  background-size: $select2-icon-size !important;
 }
 
 .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {

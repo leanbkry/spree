@@ -34,7 +34,7 @@
         <%# Sidebar                                         %>
         <%#-------------------------------------------------%>
         <aside
-          class="col-12 col-lg-2 sidebar position-fixed d-flex justify-content-between flex-column px-0"
+          class="col-12 col-lg-3 col-xl-2 sidebar position-fixed d-flex justify-content-between flex-column px-0"
           id="main-sidebar"
           data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>
@@ -45,7 +45,7 @@
         <%#-------------------------------------------------%>
         <%# Content                                         %>
         <%#-------------------------------------------------%>
-        <main class="col-12 col-lg-10 offset-lg-2 main" id="main-part" role="main">
+        <main class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 main" id="main-part">
           <div class="container">
 
             <%#-------------------------------------------------%>
@@ -54,11 +54,6 @@
             <%= render partial: 'spree/admin/shared/content_header' %>
 
             <div class="row">
-              <%#-------------------------------------------------%>
-              <%# Alerts                                          %>
-              <%#-------------------------------------------------%>
-              <%= flash_alert(flash) %>
-
               <%#-------------------------------------------------%>
               <%# Main content                                    %>
               <%#-------------------------------------------------%>
@@ -81,17 +76,17 @@
         </main>
       </div>
     </div>
-    <% if content_for?(:sidebar) || content_for?(:page_actions) %>
-      <button id="contextual-menu-toggle"
-              type="button"
-              class="btn btn-primary btn-circle d-lg-none">
-              <%= svg_icon name: "chevron-down.svg", width: '22', height: '22' %>
-      </button>
-    <% end %>
+
     <%#-------------------------------------------------%>
     <%# Insert footer scripts here                      %>
     <%#-------------------------------------------------%>
     <div id="multi-backdrop" class="modal-backdrop fade"></div>
     <div data-hook="admin_footer_scripts"></div>
+
+    <%#-------------------------------------------------%>
+    <%# Alerts                                          %>
+    <%#-------------------------------------------------%>
+    <%= flash_alert(flash) %>
+    
   </body>
 </html>

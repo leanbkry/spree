@@ -95,7 +95,7 @@ module Spree
           end
         else
           per_page_default = Spree::Config.admin_orders_per_page
-          per_page_options = %w{15 30 45 60}
+          per_page_options = %w{25 50 75}
         end
 
         selected_option = params[:per_page].try(:to_i) || per_page_default
@@ -213,7 +213,7 @@ module Spree
         if html_options[:method] &&
             !html_options[:method].to_s.casecmp('get').zero? &&
             !html_options[:remote]
-          form_tag(url, method: html_options.delete(:method), class: 'd-inline') do
+          form_tag(url, method: html_options.delete(:method)) do
             button(text, html_options.delete(:icon), nil, html_options)
           end
         else
@@ -235,7 +235,7 @@ module Spree
             text = "#{icon} #{text}"
           end
 
-          link_to(text.html_safe, url, html_options)
+          link_to(text.html_safe, url, html_options.except(:icon))
         end
       end
 
@@ -247,7 +247,7 @@ module Spree
         options[:class] = 'sidebar-menu-item d-block w-100'
         options[:class] << ' selected' if is_selected
         content_tag(:li, options) do
-          link_to(link_text, url, class: "#{'text-success' if is_selected} py-1 px-3 d-block sidebar-submenu-item")
+          link_to(link_text, url, class: "#{'text-success' if is_selected} sidebar-submenu-item w-100 py-2 py-md-1 pl-3 d-block")
         end
       end
 

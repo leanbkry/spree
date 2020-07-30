@@ -11,6 +11,9 @@ table.table {
     &.handel-head {
       width: 50px;
     }
+    a.sort_link {
+      white-space: nowrap;
+    }
   }
 
   td {
@@ -56,6 +59,18 @@ table.table {
 .table-active-filters {
   display: none;
   margin: -.5em 0 .9em;
+
+  .js-filter {
+    .icon {
+      cursor: pointer;
+    }
+  }
+
+  .badge-secondary {
+    .icon {
+      filter: invert(1);
+    }
+  }
 
   .badge {
     display: inline-block;
