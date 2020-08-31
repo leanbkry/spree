@@ -42,8 +42,10 @@ module Spree
     end
 
     def logo(image_path = nil, options = {})
-      image_path ||= if current_store.logo.attached?
+      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
                        main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+                     elsif current_store.logo.attached? && current_store.logo.image?
+                       main_app.url_for(current_store.logo)
                      else
                        Spree::Config[:logo]
                      end
@@ -110,7 +112,7 @@ module Spree
     def pretty_time(time)
       return '' if time.blank?
 
-      [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p')].join(' ')
+      [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p %Z')].join(' ')
     end
 
     def pretty_date(date)

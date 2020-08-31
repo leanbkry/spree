@@ -898,6 +898,7 @@ en:
     follow_us: Follow us
     footer_info: Footer info
     forgot_password: Forgot password?
+    free: Free
     free_shipping: Free Shipping
     free_shipping_amount: "-"
     front_end: Front End
@@ -986,7 +987,9 @@ en:
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
     inventory_state: Inventory State
     is_not_available_to_shipment_address: is not available to shipment address
-    iso_name: Iso Name
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: ISO Name
     issued_on: Issued On
     item: Item
     item_description: Item Description
@@ -1176,11 +1179,13 @@ en:
     order_mailer:
       subtotal: ! 'Subtotal:'
       total: ! 'Order Total:'
+      store_team: '%{store_name} Team'
       cancel_email:
         dear_customer: Dear %{name},
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
+        thanks: Thank you for your business.
       confirm_email:
         dear_customer: Dear %{name},
         instructions: Please review and retain the following order information for your records.
@@ -1192,6 +1197,7 @@ en:
         instructions: You have received a new order.
         order_summary: Order %{number} Summary
         subject: '%{store_name} received a new order'
+        thanks: Thank you for your business.
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
@@ -1453,6 +1459,7 @@ en:
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     reimbursement_mailer:
       reimbursement_email:
+        store_team: '%{store_name} Team'
         days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
         dear_customer: Dear %{name},
         exchange_summary: Exchange Summary
@@ -1515,6 +1522,7 @@ en:
     shipment_details: "From %{stock_location} via %{shipping_method}"
     shipment_mailer:
       shipped_email:
+        store_team: '%{store_name} Team'
         dear_customer: Dear %{name},
         instructions: Your order %{number} has been shipped
         shipment_summary: Shipment Summary for order
@@ -1628,7 +1636,8 @@ en:
     stock_transfer_name: Stock Transfer
     stock_transfer:
       errors:
-        must_have_variant: You must add atleast one variant.
+        must_have_variant: You must add at least one variant.
+        variants_unavailable: "Some variants are not available on %{stock}" 
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
@@ -1709,7 +1718,7 @@ en:
     taxonomy_categories_name: Categories
     taxonomy_edit: Edit taxonomy
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
-    taxonomy_tree_instruction: ! '* Right click a child in the tree to access the menu for adding, deleting or sorting a child.'
+    taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
     test: Test
     test_mailer:
@@ -1792,5 +1801,6 @@ en:
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip
     zipcode: Zip Code
+    zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones
