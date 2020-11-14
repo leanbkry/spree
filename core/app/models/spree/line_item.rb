@@ -57,7 +57,7 @@ module Spree
     end
 
     def update_price
-      if Spree::Config.allow_currency_change == true
+      if Spree::Config.show_store_currency_selector == true
         currency_price = Spree::Price.where(
           currency: order.currency,
           variant_id: variant_id
@@ -75,7 +75,8 @@ module Spree
 
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price,
-                  :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total
+                  :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total,
+                  :pre_tax_amount
 
     alias single_money display_price
     alias single_display_amount display_price
