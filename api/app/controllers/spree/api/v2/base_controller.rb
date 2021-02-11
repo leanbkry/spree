@@ -5,37 +5,14 @@ module Spree
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
+        include Spree::Core::ControllerHelpers::Locale
+        include Spree::Core::ControllerHelpers::Currency
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
         rescue_from Spree::Core::GatewayError, with: :gateway_error
 
         def content_type
           Spree::Api::Config[:api_v2_content_type]
-        end
-
-        private
-
-        def serialize_collection(collection)
-          collection_serializer.new(
-            collection,
-            collection_options(collection)
-          ).serializable_hash
-        end
-
-        def serialize_resource(resource)
-          resource_serializer.new(
-            resource,
-            include: resource_includes,
-            fields: sparse_fields
-          ).serializable_hash
-        end
-
-        def paginated_collection
-          collection_paginator.new(sorted_collection, params).call
-        end
-
-        def collection_paginator
-          Spree::Api::Dependencies.storefront_collection_paginator.constantize
         end
 
         def render_serialized_payload(status = 200)
@@ -105,6 +82,10 @@ module Spree
             select { |_, v| v.is_a?(String) }.
             each { |type, values| fields[type.intern] = values.split(',').map(&:intern) }
           fields.presence
+        end
+
+        def serializer_params
+          { currency: current_currency, store: current_store, user: spree_current_user }
         end
 
         def record_not_found

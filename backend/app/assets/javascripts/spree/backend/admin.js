@@ -5,9 +5,6 @@ Hopefully, this will evolve into a propper class.
 **/
 
 /* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
-
-//= require spree/backend/flatpickr_locals
-
 jQuery(function ($) {
   // Add some tips
   $('.with-tip').each(function() {
@@ -123,7 +120,7 @@ jQuery(function ($) {
   $('.js-filterable').each(function () {
     var $this = $(this)
 
-    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0) {
+    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0 && $this.prop('readonly') !== true) {
       var ransackValue, filter
       var ransackFieldId = $this.attr('id')
       var label = $('label[for="' + ransackFieldId + '"]')
@@ -227,27 +224,27 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 
 document.addEventListener('DOMContentLoaded', function() {
   var dateFrom = flatpickr('.datePickerFrom', {
+    altInput: true,
     time_24hr: true,
-    dateFormat: Spree.translations.date_picker,
-    monthSelectorType: 'static',
+    locale: Spree.translations.flatpickr_locale,
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 
   var dateTo = flatpickr('.datePickerTo', {
-    monthSelectorType: 'static',
+    locale: Spree.translations.flatpickr_locale,
     time_24hr: true,
-    dateFormat: Spree.translations.date_picker,
+    altInput: true,
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
   })
 
   flatpickr('.datepicker', {
-    monthSelectorType: 'static',
+    locale: Spree.translations.flatpickr_locale,
     time_24hr: true,
-    dateFormat: Spree.translations.date_picker
+    altInput: true
   })
 })
 
