@@ -44,7 +44,11 @@ module Spree
           display_compare_at_price(product, params[:currency])
         end
 
-        has_many :variants
+        has_many :variants,
+          object_method_name: :available_variants,
+          record_type: :variant,
+          serializer: :variant
+
         has_many :option_types
         has_many :product_properties
         has_many :taxons
