@@ -4,6 +4,9 @@ extends: standard
 globals:
   Spree: true
   analytics: true
+  DOMPurify: true
+  flatpickr: true
+  Sortable: true
   ga: true
   _: true
   Select2: true
@@ -18,7 +21,11 @@ globals:
   AUTH_TOKEN: true
   SPREE_LOCALE: true
   SPREE_CURRENCY: true
-  update_state: true
+  SPREE_DEFAULT_CURRENCY: true
+  SPREE_DEFAULT_LOCALE: true
+  OAUTH_TOKEN: true
+  updateAddressState: true
+  formatSelect2Options: true
 
 env:
   browser: true

@@ -137,10 +137,10 @@ module Spree
     end
 
     def asset_exists?(path)
-      if Rails.env.production?
-        Rails.application.assets_manifest.find_sources(path).present?
+      if Rails.configuration.assets.compile
+        Rails.application.precompiled_assets.include? path
       else
-        Rails.application.assets.find_asset(path).present?
+        Rails.application.assets_manifest.assets[path].present?
       end
     end
 
@@ -228,6 +228,11 @@ module Spree
     end
 
     def price_filter_values
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `FrontendHelper#price_filter_values` is deprecated and will be removed in Spree 5.0.
+        Please use `ProductsFiltersHelper#price_filters` method
+      DEPRECATION
+
       @price_filter_values ||= [
         "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
         "#{formatted_price(50)} - #{formatted_price(100)}",
@@ -250,7 +255,42 @@ module Spree
     end
 
     def filtering_params_cache_key
-      @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_param
+      @filtering_params_cache_key ||= begin
+        cache_key_parts = []
+
+        permitted_products_params.each do |key, value|
+          next if value.blank?
+
+          if value.is_a?(String)
+            cache_key_parts << [key, value].join('-')
+          else
+            value.each do |part_key, part_value|
+              next if part_value.blank?
+
+              cache_key_parts << [part_key, part_value].join('-')
+            end
+          end
+        end
+
+        cache_key_parts.join('-').parameterize
+      end
+    end
+
+    def filters_cache_key(kind)
+      base_cache_key + [
+        kind,
+        available_option_types_cache_key,
+        available_properties_cache_key,
+        filtering_params_cache_key,
+        @taxon&.id,
+        params[:menu_open]
+      ].flatten
+    end
+
+    def permitted_products_params
+      @permitted_products_params ||= begin
+        params.permit(*filtering_params, properties: available_properties.map(&:filter_param))
+      end
     end
 
     def available_option_types_cache_key
@@ -262,6 +302,17 @@ module Spree
         Spree::OptionType.includes(:option_values).filterable.to_a
       end
       @available_option_types
+    end
+
+    def available_properties_cache_key
+      @available_properties_cache_key ||= Spree::Property.filterable.maximum(:updated_at)&.utc&.to_i
+    end
+
+    def available_properties
+      @available_properties ||= Rails.cache.fetch("available-properties/#{available_properties_cache_key}") do
+        Spree::Property.includes(:product_properties).filterable.to_a
+      end
+      @available_properties
     end
 
     def spree_social_link(service)
@@ -305,7 +356,7 @@ module Spree
     end
 
     def checkout_edit_link(step = 'address', order = @order)
-      return if order.complete?
+      return if order.uneditable?
 
       classes = 'align-text-bottom checkout-confirm-delivery-informations-link'
 

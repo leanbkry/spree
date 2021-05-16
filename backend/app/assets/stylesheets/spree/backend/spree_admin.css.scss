@@ -19,6 +19,7 @@
 @import 'components/progress';
 @import 'components/spinner';
 
+@import 'plugins/sweetalert2_custom';
 @import 'plugins/jquery_ui';
 @import 'plugins/flatpickr';
 @import 'plugins/select2_bootstrap4';
@@ -27,6 +28,7 @@
 @import 'shared/base';
 @import 'shared/forms';
 
+@import 'views/menus';
 @import 'views/order_payments';
 @import 'views/product_properties';
 @import 'views/prototypes';

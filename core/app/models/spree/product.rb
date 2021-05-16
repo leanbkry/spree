@@ -36,6 +36,8 @@ module Spree
     has_many :product_properties, dependent: :destroy, inverse_of: :product
     has_many :properties, through: :product_properties
 
+    has_many :menu_items, as: :linked_resource
+
     has_many :classifications, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
 
@@ -99,6 +101,9 @@ module Spree
     after_save :reset_memoized_data
     after_commit :reset_memoized_data
 
+    after_save :sync_menu_item_paths
+    after_commit :sync_menu_item_paths
+
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
@@ -107,8 +112,9 @@ module Spree
       validates :meta_title
     end
     with_options presence: true do
-      validates :name, :shipping_category
-      validates :price, if: proc { Spree::Config[:require_master_price] }
+      validates :name
+      validates :shipping_category, if: :requires_shipping_category?
+      validates :price, if: :requires_price?
     end
 
     validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
@@ -328,6 +334,12 @@ module Spree
 
     private
 
+    def sync_menu_item_paths
+      return unless saved_change_to_slug?
+
+      Spree::MenuItem.refresh_paths(self)
+    end
+
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
         prototype.properties.each do |property|
@@ -489,6 +501,14 @@ module Spree
       %w(total_on_hand taxonomy_ids taxon_and_ancestors category default_variant_id tax_category default_variant).each do |v|
         instance_variable_set(:"@#{v}", nil)
       end
+    end
+
+    def requires_price?
+      Spree::Config[:require_master_price]
+    end
+
+    def requires_shipping_category?
+      true
     end
   end
 end

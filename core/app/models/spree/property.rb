@@ -1,5 +1,9 @@
 module Spree
   class Property < Spree::Base
+    include Spree::FilterParam
+
+    auto_strip_attributes :name, :presentation
+
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'
     has_many :prototypes, through: :property_prototypes, class_name: 'Spree::Prototype'
 
@@ -9,10 +13,17 @@ module Spree
     validates :name, :presentation, presence: true
 
     scope :sorted, -> { order(:name) }
+    scope :filterable, -> { where(filterable: true) }
 
     after_touch :touch_all_products
 
     self.whitelisted_ransackable_attributes = ['presentation']
+
+    def uniq_values
+      Rails.cache.fetch("property-uniq-values/#{cache_key_with_version}") do
+        product_properties.where.not(value: [nil, '']).pluck(:filter_param, :value).uniq
+      end
+    end
 
     private
 

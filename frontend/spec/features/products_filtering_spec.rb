@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Products filtering', :js, :caching do
+describe 'Products filtering', :js do
   let!(:taxon) { create :taxon }
 
   let!(:option_type_1) { create :option_type, name: 'size', presentation: 'Size' }
@@ -10,8 +10,19 @@ describe 'Products filtering', :js, :caching do
   let!(:option_type_2) { create :option_type, name: 'color', presentation: 'Color' }
   let!(:option_value_2_1) { create :option_value, option_type: option_type_2, name: 'green', presentation: 'Green' }
 
+  let!(:property_1) { create :property, name: 'manufacturer', presentation: 'Manufacturer', filterable: true }
+  let!(:product_property_1) { create :product_property, value: 'Wilson', property: property_1 }
+
+  let!(:property_2) { create :property, name: 'brand', presentation: 'Brand', filterable: true }
+  let!(:product_property_2) { create :product_property, value: 'Zeta', property: property_2 }
+  let!(:product_property_3) { create :product_property, value: 'Alpha', property: property_2 }
+
+  let!(:property_3) { create :property, name: 'collection', presentation: 'Collection', filterable: true }
+
   let!(:product_1) { create :product, name: 'First shirt', option_types: [option_type_1] }
   let!(:variant_1_1) { create :variant, product: product_1, option_values: [option_value_1_1] }
+
+  let!(:product_2) { create :product, name: 'Second shirt', option_types: [option_type_1], product_properties: [product_property_3] }
 
   def search_by(text)
     find('.search-icons').click
@@ -36,12 +47,21 @@ describe 'Products filtering', :js, :caching do
     have_css '.plp-overlay-card-item--selected', text: value
   end
 
+  def expect_working_filters_clearing
+    click_on 'CLEAR ALL'
+    expect(page).to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
+    expect(page).not_to have_css('.plp-overlay-card-item--selected')
+  end
+
   def filters
     find('#plp-filters-accordion')
   end
 
   it 'correctly filters Products' do
     visit spree.nested_taxons_path(taxon)
+
+    expect(page).not_to have_content('CLEAR ALL')
 
     search_by 'shirt'
     expect(page).to have_content 'First shirt'
@@ -54,6 +74,21 @@ describe 'Products filtering', :js, :caching do
     expect(page).to have_content 'First shirt'
     expect(page).to have_selected_filter_with(value: 'M')
     expect(page).to have_selected_filter_with(value: 'S')
+
+    expect_working_filters_clearing
+
+    click_on_filter 'Brand', value: 'Alpha'
+    expect(page).not_to have_content 'First shirt'
+    expect(page).to have_content 'Second shirt'
+    expect(page).to have_selected_filter_with(value: 'ALPHA')
+
+    expect_working_filters_clearing
+
+    click_on_filter 'Price', value: '$50 - $100'
+    expect(page).to have_content 'No results'
+
+    expect_working_filters_clearing
+
     expect(current_path).to eq spree.products_path
   end
 
@@ -71,6 +106,38 @@ describe 'Products filtering', :js, :caching do
       visit spree.nested_taxons_path(taxon)
 
       expect(filters).not_to have_content('Color')
+    end
+  end
+
+  context 'property filters' do
+    it 'displays filterable properties' do
+      visit spree.nested_taxons_path(taxon)
+
+      %w[Manufacturer Brand].each do |property_name|
+        expect(filters).to have_content(property_name)
+      end
+    end
+
+    it 'does not display unfilterable properties' do
+      property_2.update!(filterable: false)
+      visit spree.nested_taxons_path(taxon)
+
+      expect(filters).not_to have_content('Brand')
+    end
+
+    it 'does not display properties that do not have values' do
+      visit spree.nested_taxons_path(taxon)
+
+      expect(filters).not_to have_content('Collection')
+    end
+
+    it 'shows products that match property filter' do
+      visit spree.products_path
+
+      click_on_filter 'Brand', value: 'Alpha'
+
+      expect(page).not_to have_content('First shirt')
+      expect(page).to have_content('Second shirt')
     end
   end
 end

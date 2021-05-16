@@ -187,6 +187,14 @@ Spree::Core::Engine.add_routes do
       end
       resources :store_credits
     end
+
+    resources :menus do
+      resources :menu_items, except: :index do
+        member do
+          delete :remove_icon
+        end
+      end
+    end
   end
 
   spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
